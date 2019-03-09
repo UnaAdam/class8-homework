@@ -24,39 +24,23 @@ df = pd.DataFrame(data= boston_data['data'], columns= boston_data['feature_names
 df["MEDV"] = boston_data.target
 print(df.head())
 
-'''
 
 #2. Apply KNN Classifier / Regressor
 #2.1 Split the data into training and testing
 
 from sklearn.model_selection import train_test_split
 
-X = df.drop('MEDV', axis = 1)
-Y = df['MEDV']
-X_train, X_test, Y_train, Y_test = train_test_split(X, Y, test_size = 0.5, random_state = 5)
+df_train, df_test = train_test_split(df, test_size = 0.5, random_state = 5)
 
-print(X_train.shape)
-print(X_test.shape)
-print(Y_train.shape)
-print(Y_test.shape)
+print(df_train.shape)
+print(df_test.shape)
 
 #2.2 Regression
 from sklearn.linear_model import LinearRegression
 
-model = LinearRegression()
-model.fit(X_train, Y_train)
-Y_pred = model.predict(X_test)
-
-
-import matplotlib.pyplot as plt
-
-plt.scatter(Y_test, Y_pred)
-plt.xlabel("Actual Prices")
-plt.ylabel("Predicted prices")
-plt.title("Actual Prices vs Predicted prices")
-plt.savefig("prices.png", dpi=200)
-
-'''
+regr = LinearRegression()
+print("Train rows: ", df_train.iloc[:,:-1].shape)
+print("Train Y: ", df_train.iloc[:,-1].shape)
 
 #Plotting:
 
