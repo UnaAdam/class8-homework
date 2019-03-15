@@ -145,30 +145,66 @@ for col in sorted_df:
             idx, col, col2), auto_open=False)
 
 
-#3. Apply KNN Classifier / Regressor
+#3. Apply Regressor
+
 #3.1 Split the data into training and testing
 from sklearn.model_selection import train_test_split
 print("Creating and fitting Regression Model!")
 
 df_train, df_test, medv_train, medv_test = train_test_split(boston_data["data"], boston_data["target"])
-#3.2 Regression
+
+#3.2 Linear Regression
+from sklearn.metrics import mean_squared_error
+
+#3.2.1 Make a model and fit the values
 from sklearn.linear_model import LinearRegression
 
-regr = LinearRegression()
-regr.fit(df_train, medv_train)
+lregr = LinearRegression()
+lregr.fit(df_train, medv_train)
 
-predicted_medv = regr.predict(df_test)
+predicted_medv = lregr.predict(df_test)
 expected_medv = medv_test
 
-#3.3 Regression performance
+#3.2.2 Linear Regression performance
+from math import sqrt
+
+lr_mse = sqrt(mean_squared_error(expected_medv, predicted_medv)) 
+
+plt.figure(figsize=(16, 9), dpi=200)
+plt.subplot(2, 2, 1)
 
 sns.regplot(expected_medv, predicted_medv, color='g')
-
 plt.xlabel('Expected Value')
 plt.ylabel('Predicted Value')
-plt.title('Expected vs Predicted Value')
+plt.title('Linear Regression, RMSE= {0}'.format(lr_mse))
+
+#3.3 Gradient boosted tree
+from sklearn.ensemble import GradientBoostingRegressor
+
+#3.3.1 Make a model and fit the values
+gbregr= GradientBoostingRegressor(loss='ls')
+gbregr.fit(df_train, medv_train)
+
+predicted_medv = gbregr.predict(df_test)
+expected_medv = medv_test
+
+#3.3.2 Gradient Boosting performance
+gr_rmse = sqrt(mean_squared_error(expected_medv, predicted_medv))
+
+plt.subplot(2, 2, 2)
+sns.regplot(expected_medv, predicted_medv, color='b')
+plt.xlabel('Expected Value')
+plt.ylabel('Predicted Value')
+plt.title('Gradient Boosting, RMSE= {0}'.format(gr_rmse))
 
 plt.savefig("Regression.png")
 plt.close()
+
+plt.subplot(2, 2, 3)
+plt.subplot(2, 2, 4)
+
+#3.4 Gradient boosted tree
+#3.4.1 
+
 
 print("-------------- FINISHED! --------------")
