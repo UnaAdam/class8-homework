@@ -155,11 +155,11 @@ df_train, df_test, medv_train, medv_test = train_test_split(boston_data["data"],
 
 #3.2 Linear Regression
 from sklearn.metrics import mean_squared_error
+from sklearn import linear_model
 
 #3.2.1 Make a model and fit the values
-from sklearn.linear_model import LinearRegression
 
-lregr = LinearRegression()
+lregr = linear_model.LinearRegression()
 lregr.fit(df_train, medv_train)
 
 predicted_medv = lregr.predict(df_test)
@@ -167,44 +167,72 @@ expected_medv = medv_test
 
 #3.2.2 Linear Regression performance
 from math import sqrt
+from sklearn.metrics import r2_score
 
-lr_mse = sqrt(mean_squared_error(expected_medv, predicted_medv)) 
+lr_rmse = sqrt(mean_squared_error(expected_medv, predicted_medv)) 
 
 plt.figure(figsize=(16, 9), dpi=200)
 plt.subplot(2, 2, 1)
 
 sns.regplot(expected_medv, predicted_medv, color='g')
-plt.xlabel('Expected Value')
 plt.ylabel('Predicted Value')
-plt.title('Linear Regression, RMSE= {0}'.format(lr_mse))
+plt.title('Linear Regression.\nRMSE= {0},R2-Score= {1}'.format(lr_rmse,r2_score(expected_medv, predicted_medv)))
 
-#3.3 Gradient boosted tree
-from sklearn.ensemble import GradientBoostingRegressor
+#3.3 Bayesian Ridge Linear Regression
 
 #3.3.1 Make a model and fit the values
+br_reg = linear_model.BayesianRidge()
+br_reg.fit(df_train, medv_train)
+
+predicted_medv = br_reg.predict(df_test)
+expected_medv = medv_test
+
+#3.3.2 Model performance
+br_rmse = sqrt(mean_squared_error(expected_medv, predicted_medv))
+
+plt.subplot(2, 2, 2)
+sns.regplot(expected_medv, predicted_medv, color='red')
+
+plt.title('Bayesian Ridge Linear Regression.\nRMSE= {0} , R2-Score= {1}'.format(br_rmse, r2_score(expected_medv, predicted_medv)))
+
+#3.4 Lasso
+#3.4.1 Creating a model and fit it
+
+lasso_reg = linear_model.LassoLars(alpha=.1)
+lasso_reg.fit(df_train, medv_train)
+
+predicted_medv = lasso_reg.predict(df_test)
+expected_medv = medv_test
+
+#3.4.2 Model performance
+lasso_rmse = sqrt(mean_squared_error(expected_medv, predicted_medv))
+
+plt.subplot(2, 2, 3)
+sns.regplot(expected_medv, predicted_medv, color='orange')
+plt.xlabel('Expected Value')
+plt.ylabel('Predicted Value')
+plt.title('Lasso Linear Regression.\nRMSE= {0} , R2-Score= {1}'.format(lasso_rmse, r2_score(expected_medv, predicted_medv)))
+
+#3.5 Gradient boosted tree
+from sklearn.ensemble import GradientBoostingRegressor
+
+#3.5.1 Make a model and fit the values
 gbregr= GradientBoostingRegressor(loss='ls')
 gbregr.fit(df_train, medv_train)
 
 predicted_medv = gbregr.predict(df_test)
 expected_medv = medv_test
 
-#3.3.2 Gradient Boosting performance
+#3.5.2 Gradient Boosting performance
 gr_rmse = sqrt(mean_squared_error(expected_medv, predicted_medv))
 
-plt.subplot(2, 2, 2)
+plt.subplot(2, 2, 4)
 sns.regplot(expected_medv, predicted_medv, color='b')
 plt.xlabel('Expected Value')
-plt.ylabel('Predicted Value')
-plt.title('Gradient Boosting, RMSE= {0}'.format(gr_rmse))
+plt.title('Gradient Boosting.\nRMSE= {0} , R2-Score= {1}'.format(gr_rmse, r2_score(expected_medv, predicted_medv)))
 
-plt.savefig("Regression.png")
+plt.tight_layout()
+plt.savefig("Regression_Models.png")
 plt.close()
-
-plt.subplot(2, 2, 3)
-plt.subplot(2, 2, 4)
-
-#3.4 Gradient boosted tree
-#3.4.1 
-
 
 print("-------------- FINISHED! --------------")
